@@ -220,7 +220,7 @@ def main():
         check=True,
     )
     (OUTPUT / "CICD").write_text(
-        f"$ gh run view {verified_run_id} --verbose\\n\\n" + verbose.stdout + verbose.stderr,
+        f"$ gh run view {verified_run_id} --verbose\n\n" + verbose.stdout + verbose.stderr,
         encoding="utf-8",
     )
     (EVIDENCE / "README.txt").write_text(
