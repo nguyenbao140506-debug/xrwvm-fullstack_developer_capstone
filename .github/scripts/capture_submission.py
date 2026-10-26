@@ -58,7 +58,7 @@ def capture_api_outputs():
     )
     csrf_command = f"curl -i -c cookies.txt {BASE_URL}/djangoapp/csrf"
     login_command = (
-        "curl -i -b cookies.txt -c cookies.txt -H 'X-CSRFToken: <token from previous response>' "
+        "curl -i -X POST -b cookies.txt -c cookies.txt -H 'X-CSRFToken: <token from previous response>' "
         "-H 'Content-Type: application/json' "
         f"--data '{login_payload}' {BASE_URL}/djangoapp/login"
     )
@@ -193,24 +193,34 @@ def main():
     take_screenshots()
 
     server_log = Path(os.environ["DJANGO_SERVER_LOG"])
-    (OUTPUT / "django_server").write_text(
-        "python3 manage.py runserver 127.0.0.1:8000 --noreload\n"
-        + server_log.read_text(encoding="utf-8"),
-        encoding="utf-8",
+    (OUTPUT / "django_server").write_text(server_log.read_text(encoding="utf-8"), encoding="utf-8")
+    current_run_id = os.environ["GITHUB_RUN_ID"]
+    run_list = subprocess.run(
+        [
+            "gh", "run", "list", "--limit", "25",
+            "--json", "databaseId,conclusion,workflowName",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
     )
-    workflow_url = f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+    successful_runs = [
+        run for run in json.loads(run_list.stdout)
+        if run["workflowName"] == "Lint Code"
+        and run["conclusion"] == "success"
+        and str(run["databaseId"]) != current_run_id
+    ]
+    if not successful_runs:
+        raise RuntimeError("No completed successful Lint Code run is available for the verbose submission.")
+    verified_run_id = str(successful_runs[0]["databaseId"])
+    verbose = subprocess.run(
+        ["gh", "run", "view", verified_run_id, "--verbose"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
     (OUTPUT / "CICD").write_text(
-        f"✓ main Lint Code · {os.environ.get('GITHUB_RUN_ID', 'unknown')}\n"
-        "Triggered via push\n\nJOBS\n"
-        f"✓ Lint Python Files — {os.environ.get('CAPSTONE_PYTHON_JOB_STATUS', 'unknown')}\n"
-        "  ✓ Set up job\n  ✓ Checkout Repository\n  ✓ Set up Python\n  ✓ Install dependencies\n"
-        "  ✓ Print working directory\n  ✓ Run Linter\n  ✓ Run Django development server\n"
-        "  ✓ Save Django server output\n  ✓ Build Docker image\n  ✓ Complete job\n"
-        f"✓ Lint JavaScript Files — {os.environ.get('CAPSTONE_JS_JOB_STATUS', 'unknown')}\n"
-        "  ✓ Set up job\n  ✓ Checkout Repository\n  ✓ Install Node.js\n  ✓ Install JSHint\n"
-        "  ✓ Install frontend dependencies\n  ✓ Run Linter\n  ✓ Complete job\n"
-        "✓ Capture Submission Evidence — running in this workflow\n"
-        f"Workflow URL: {workflow_url}\n",
+        f"$ gh run view {verified_run_id} --verbose\\n\\n" + verbose.stdout + verbose.stderr,
         encoding="utf-8",
     )
     (EVIDENCE / "README.txt").write_text(
