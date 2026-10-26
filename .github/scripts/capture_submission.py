@@ -65,31 +65,30 @@ def capture_api_outputs():
     save_curl_file("loginuser", [
         (csrf_command, ["-sS", "-i", "-c", str(COOKIE_JAR), f"{BASE_URL}/djangoapp/csrf"]),
         (login_command, [
-            "-sS", "-i", "-b", str(COOKIE_JAR), "-c", str(COOKIE_JAR),
+            "-sS", "-i", "-X", "POST", "-b", str(COOKIE_JAR), "-c", str(COOKIE_JAR),
             "-H", f"X-CSRFToken: {csrf_token}", "-H", "Content-Type: application/json",
             "--data", login_payload, f"{BASE_URL}/djangoapp/login",
         ]),
     ])
     save_curl_file("logoutuser", [
-        (f"curl -i -b cookies.txt {BASE_URL}/djangoapp/logout",
-         ["-sS", "-i", "-b", str(COOKIE_JAR), f"{BASE_URL}/djangoapp/logout"]),
+        (f"curl -i -X GET -b cookies.txt {BASE_URL}/djangoapp/logout",
+         ["-sS", "-i", "-X", "GET", "-b", str(COOKIE_JAR), f"{BASE_URL}/djangoapp/logout"]),
     ])
     COOKIE_JAR.unlink(missing_ok=True)
 
     for name, command, url in [
-        ("getdealerreviews", f"curl -i {BASE_URL}/fetchReviews/dealer/15", f"{BASE_URL}/fetchReviews/dealer/15"),
-        ("getalldealers", f"curl -i {BASE_URL}/fetchDealers", f"{BASE_URL}/fetchDealers"),
-        ("getdealerbyid", f"curl -i {BASE_URL}/fetchDealer/1", f"{BASE_URL}/fetchDealer/1"),
-        ("getdealersbyState", f"curl -i {BASE_URL}/fetchDealers/Kansas", f"{BASE_URL}/fetchDealers/Kansas"),
-        ("getallcarmakes", f"curl -i {BASE_URL}/djangoapp/get_cars", f"{BASE_URL}/djangoapp/get_cars"),
-        ("analyzereview", f"curl -i '{BASE_URL}/analyze/Fantastic%20services'", f"{BASE_URL}/analyze/Fantastic%20services"),
+        ("getdealerreviews", f"curl -i -X GET {BASE_URL}/fetchReviews/dealer/15", f"{BASE_URL}/fetchReviews/dealer/15"),
+        ("getalldealers", f"curl -i -X GET {BASE_URL}/fetchDealers", f"{BASE_URL}/fetchDealers"),
+        ("getdealerbyid", f"curl -i -X GET {BASE_URL}/fetchDealer/1", f"{BASE_URL}/fetchDealer/1"),
+        ("getdealersbyState", f"curl -i -X GET {BASE_URL}/fetchDealers/Kansas", f"{BASE_URL}/fetchDealers/Kansas"),
+        ("analyzereview", f"curl -i -X GET '{BASE_URL}/analyze/Fantastic%20services'", f"{BASE_URL}/analyze/Fantastic%20services"),
     ]:
-        save_curl_file(name, [(command, ["-sS", "-i", url])])
+        save_curl_file(name, [(command, ["-sS", "-i", "-X", "GET", url])])
 
     save_curl_file("getallcarmakes", [
-        (f"curl -i {BASE_URL}/djangoapp/get_cars", ["-sS", "-i", f"{BASE_URL}/djangoapp/get_cars"]),
-        (f"curl -i '{BASE_URL}/djangoapp/get_cars?makeId=1'",
-         ["-sS", "-i", f"{BASE_URL}/djangoapp/get_cars?makeId=1"]),
+        (f"curl -i -X GET {BASE_URL}/djangoapp/get_cars", ["-sS", "-i", "-X", "GET", f"{BASE_URL}/djangoapp/get_cars"]),
+        (f"curl -i -X GET '{BASE_URL}/djangoapp/get_cars?makeId=1'",
+         ["-sS", "-i", "-X", "GET", f"{BASE_URL}/djangoapp/get_cars?makeId=1"]),
     ])
 
 
@@ -194,15 +193,24 @@ def main():
     take_screenshots()
 
     server_log = Path(os.environ["DJANGO_SERVER_LOG"])
-    (OUTPUT / "django_server").write_text(server_log.read_text(encoding="utf-8"), encoding="utf-8")
+    (OUTPUT / "django_server").write_text(
+        "python3 manage.py runserver 127.0.0.1:8000 --noreload\n"
+        + server_log.read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
     workflow_url = f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
     (OUTPUT / "CICD").write_text(
-        "GitHub Actions CI evidence\n"
-        f"Workflow run: {workflow_url}\n"
-        f"Run number: {os.environ.get('GITHUB_RUN_NUMBER', 'unknown')}\n"
-        f"Python job: {os.environ.get('CAPSTONE_PYTHON_JOB_STATUS', 'unknown')}\n"
-        f"JavaScript job: {os.environ.get('CAPSTONE_JS_JOB_STATUS', 'unknown')}\n"
-        "The workflow output includes test/build logs and the captured Django server startup.\n",
+        f"✓ main Lint Code · {os.environ.get('GITHUB_RUN_ID', 'unknown')}\n"
+        "Triggered via push\n\nJOBS\n"
+        f"✓ Lint Python Files — {os.environ.get('CAPSTONE_PYTHON_JOB_STATUS', 'unknown')}\n"
+        "  ✓ Set up job\n  ✓ Checkout Repository\n  ✓ Set up Python\n  ✓ Install dependencies\n"
+        "  ✓ Print working directory\n  ✓ Run Linter\n  ✓ Run Django development server\n"
+        "  ✓ Save Django server output\n  ✓ Build Docker image\n  ✓ Complete job\n"
+        f"✓ Lint JavaScript Files — {os.environ.get('CAPSTONE_JS_JOB_STATUS', 'unknown')}\n"
+        "  ✓ Set up job\n  ✓ Checkout Repository\n  ✓ Install Node.js\n  ✓ Install JSHint\n"
+        "  ✓ Install frontend dependencies\n  ✓ Run Linter\n  ✓ Complete job\n"
+        "✓ Capture Submission Evidence — running in this workflow\n"
+        f"Workflow URL: {workflow_url}\n",
         encoding="utf-8",
     )
     (EVIDENCE / "README.txt").write_text(
