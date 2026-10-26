@@ -164,7 +164,7 @@ def take_screenshots():
         page.locator("#review-car-year").fill("2022")
         page.screenshot(path=str(EVIDENCE / "dealership_review_submission.png"), full_page=True)
         page.get_by_role("button", name="Submit review").click()
-        page.get_by_text(review_text, exact=True).wait_for()
+        page.locator(".review-quote").filter(has_text=review_text).wait_for()
         page.screenshot(path=str(EVIDENCE / "added_review.png"), full_page=True)
 
         admin = context.new_page()
