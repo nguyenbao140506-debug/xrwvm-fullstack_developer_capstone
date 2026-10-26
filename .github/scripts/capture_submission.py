@@ -180,7 +180,9 @@ def take_screenshots():
             logout_button.click()
         else:
             admin.locator("#user-tools a[href*='logout']").click()
-        admin.wait_for_url("**/admin/login/**")
+        admin.goto(BASE_URL + "/admin/", wait_until="networkidle")
+        if "/admin/login/" not in admin.url:
+            raise RuntimeError("Admin session was not logged out successfully.")
         capture_browser_window(EVIDENCE / "admin_logout.png")
         browser.close()
 
