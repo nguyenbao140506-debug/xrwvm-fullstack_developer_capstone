@@ -39,6 +39,8 @@ jobs:
           python manage.py check
           python manage.py makemigrations --check --dry-run
           python manage.py test
+      - name: Build Docker image
+        run: docker build --tag fullstack-developer-capstone:ci .
 
   lint-javascript:
     name: Lint JavaScript Files
@@ -63,3 +65,4 @@ jobs:
           jshint --config .jshintrc src/api.js vite.config.js
           npm test
           npm run build
+
