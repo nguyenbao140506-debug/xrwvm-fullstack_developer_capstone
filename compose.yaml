@@ -1,0 +1,25 @@
+services:
+  web:
+    build: .
+    env_file:
+      - ./server/.env
+    environment:
+      DB_PATH: /data/db.sqlite3
+      DJANGO_DEBUG: "0"
+    ports:
+      - "8000:8000"
+    volumes:
+      - dealership-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/djangoapp/health', headers={'X-Forwarded-Proto':'https'}), timeout=3)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  dealership-data:

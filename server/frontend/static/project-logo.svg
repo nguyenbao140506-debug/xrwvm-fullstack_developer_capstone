@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="title desc">
+  <title id="title">Roadside car illustration</title>
+  <desc id="desc">A teal car parked in front of a warm sun.</desc>
+  <defs>
+    <linearGradient id="body" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#a8e3d5"/><stop offset="1" stop-color="#43a99f"/></linearGradient>
+    <linearGradient id="window" x1="0" x2="1"><stop stop-color="#b8d9dc"/><stop offset="1" stop-color="#eff7ef"/></linearGradient>
+  </defs>
+  <circle cx="355" cy="93" r="66" fill="#e8af62" opacity=".95"/>
+  <path d="M67 190h33l31-63c7-14 20-23 37-25l127-12c20-2 36 5 50 21l55 62 45 15c14 5 24 18 24 33v23H71c-17 0-30-14-30-31v-1c0-13 10-22 26-22z" fill="url(#body)" stroke="#103a47" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M169 111l122-12c15-2 27 3 38 15l39 44H140l25-47c1-1 2-1 4 0z" fill="url(#window)" stroke="#103a47" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M264 103l-3 55" stroke="#103a47" stroke-width="7"/>
+  <path d="M138 170h246" stroke="#103a47" stroke-width="6" opacity=".55"/>
+  <circle cx="143" cy="226" r="36" fill="#16394a"/><circle cx="143" cy="226" r="16" fill="#dce8e7"/>
+  <circle cx="371" cy="226" r="36" fill="#16394a"/><circle cx="371" cy="226" r="16" fill="#dce8e7"/>
+  <path d="M71 202h40M411 181h21" stroke="#f8e8c8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M65 267h370" stroke="#88cdc0" stroke-width="8" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,65 @@
+name: Lint Code
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-python:
+    name: Lint Python Files
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_DEBUG: "1"
+      DJANGO_SECRET_KEY: ci-only-not-a-production-secret
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: server/requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install -r server/requirements.txt
+          python -m pip install flake8
+      - name: Print working directory
+        run: pwd
+      - name: Run Linter
+        run: |
+          flake8 --select=F server
+          cd server
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+          python manage.py test
+
+  lint-javascript:
+    name: Lint JavaScript Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: server/frontend/package-lock.json
+      - name: Install JSHint
+        run: npm install --global jshint
+      - name: Install frontend dependencies
+        working-directory: server/frontend
+        run: npm ci
+      - name: Run Linter
+        working-directory: server/frontend
+        run: |
+          jshint --config .jshintrc src/api.js vite.config.js
+          npm test
+          npm run build

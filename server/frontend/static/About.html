@@ -1,68 +1,36 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <!-- Link the style sheet here -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Meet the developer behind the full stack dealership capstone.">
+  <title>About Us | Dealerships</title>
+  <link rel="stylesheet" href="/static/site.css">
 </head>
-<div>
-  <nav class="navbar navbar-expand-lg navbar-light" style="background-color:darkturquoise; height: 1in;">
-    <div class="container-fluid">
-      <h2 style="padding-right: 5%;">Dealerships</h2>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" style="font-size: larger;" aria-current="page" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" style="font-size: larger;" href="/about">About Us</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" style="font-size: larger;" href="/contact">Contact Us</a>
-          </li>
-        </ul>
-      </div>
+<body>
+  <header class="site-header">
+    <nav class="nav-shell" aria-label="Main navigation">
+      <a class="brand" href="/" aria-label="Dealership directory home"><img src="/static/project-logo.svg" alt="">Dealerships</a>
+      <div class="nav-links"><a href="/">Dealers</a><a href="/cars">Makes &amp; Models</a><a class="active" aria-current="page" href="/static/About.html">About Us</a><a href="/static/Contact.html">Contact Us</a></div>
+      <div class="account-links"><a href="/login">Log in</a><a href="/register">Register</a></div>
+    </nav>
+  </header>
+  <section class="hero">
+    <div><p class="eyebrow">About this project</p><h1>Helping drivers find a better stop along the road.</h1><p>A full stack dealership capstone for exploring dealers, vehicle information, and customer reviews.</p></div>
+    <img src="/static/project-logo.svg" alt="Illustration of a teal car beside a warm sun">
+  </section>
+  <main class="section-wrap">
+    <div class="content-grid">
+      <section class="content-card"><p class="eyebrow">Our purpose</p><h2>Dealership information in one place</h2><p>Browse dealership locations, review vehicle makes and models, and share feedback about your experience. The project combines a Django API with a React interface.</p></section>
+      <article class="content-card team-card">
+        <img class="team-photo" src="https://avatars.githubusercontent.com/u/226885852?v=4" alt="GitHub profile photo of baonguyen">
+        <p class="eyebrow">Project developer</p><h2>baonguyen</h2>
+        <p class="team-role">Full-Stack Developer</p>
+        <p>Built the Django and React dealership capstone, including dealer browsing, account registration, and customer reviews.</p>
+        <a href="mailto:nguyenbao140506@gmail.com">nguyenbao140506@gmail.com</a>
+      </article>
     </div>
-  </nav>
-  
-    <div class="card" style="width: 80%;margin: auto; margin-top:5%;">
-      <div class="banner" name="about-header">
-      <!-- Insert header information here -->
-      </div>
-      <div style="display: flex;flex-direction: row; margin:auto">
-      <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
-        <div class="card-body">
-          <p class="title">Person1</p>
-          <p>Person1 Title</p>
-          <p class="card-text">Some text that explains the person1 in about 2 short sentences</p>
-          <p>person1@example.com</p>
-        </div>
-      </div>
-
-      <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
-        <div class="card-body">
-          <p class="title">Person2</p>
-          <p>Person2 Title</p>
-          <p class="card-text">Some text that explains the person2 in about 2 short sentences</p>
-          <p>person2@example.com</p>
-        </div>
-      </div>
-
-      <div class="card" style="width: 30%;">
-        <img class="card-img-top" src="/static/person.png" alt="Card image">
-        <div class="card-body">
-          <p class="title">Person3</p>
-          <p>Person3 Title</p>
-          <p class="card-text">Some text that explains the person3 in about 2 short sentences</p>
-          <p>person3@example.com</p>
-        </div>
-      </div>
-    </div>
-    </div>
-    </div>
-    
-</div>
-
+  </main>
+  <footer class="site-footer"><p>Full Stack Developer Capstone</p><a href="https://github.com/nguyenbao140506-debug/xrwvm-fullstack_developer_capstone">Project repository</a></footer>
+</body>
 </html>
