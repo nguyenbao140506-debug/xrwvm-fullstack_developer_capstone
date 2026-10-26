@@ -39,6 +39,24 @@ jobs:
           python manage.py check
           python manage.py makemigrations --check --dry-run
           python manage.py test
+      - name: Run Django development server
+        working-directory: server
+        shell: bash
+        run: |
+          python manage.py migrate --noinput
+          python manage.py seed_course_data
+          python3 manage.py runserver 127.0.0.1:8000 --noreload > "$RUNNER_TEMP/django_server.log" 2>&1 &
+          server_pid=$!
+          sleep 3
+          cat "$RUNNER_TEMP/django_server.log"
+          grep -q "Starting development server at" "$RUNNER_TEMP/django_server.log"
+          kill "$server_pid"
+          wait "$server_pid" || true
+      - name: Save Django server output
+        uses: actions/upload-artifact@v4
+        with:
+          name: django_server
+          path: ${{ runner.temp }}/django_server.log
       - name: Build Docker image
         run: docker build --tag fullstack-developer-capstone:ci .
 
