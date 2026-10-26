@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -31,8 +32,10 @@ def save_curl_file(name, sections):
             stream.write("Command:\n")
             stream.write(command + "\n\nOutput:\n")
             code, output = curl(args)
+            output = re.sub(r"(?im)^(Set-Cookie:\\s*(?:sessionid|csrftoken)=)[^;\\r\\n]+", r"\\1[redacted]", output)
+            output = re.sub(r'("csrfToken"\\s*:\\s*")[^"]+(")', r"\\1[redacted]\\2", output)
             stream.write(output)
-            if not output.endswith("\n"):
+            if not output.endswith("\\n"):
                 stream.write("\n")
             stream.write(f"[curl exit code: {code}]\n\n")
             if code:
@@ -52,7 +55,7 @@ def capture_api_outputs():
     )
     csrf_command = f"curl -i -c cookies.txt {BASE_URL}/djangoapp/csrf"
     login_command = (
-        f"curl -i -b cookies.txt -c cookies.txt -H 'X-CSRFToken: {csrf_token}' "
+        "curl -i -b cookies.txt -c cookies.txt -H 'X-CSRFToken: <token from previous response>' "
         "-H 'Content-Type: application/json' "
         f"--data '{login_payload}' {BASE_URL}/djangoapp/login"
     )
