@@ -5,7 +5,7 @@ services:
       - ./server/.env
     environment:
       DB_PATH: /data/db.sqlite3
-      DJANGO_DEBUG: "0"
+      DJANGO_DEBUG: "1"
     ports:
       - "8000:8000"
     volumes:

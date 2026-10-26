@@ -15,7 +15,7 @@ COPY server/requirements.txt ./requirements.txt
 RUN python -m pip install --no-cache-dir -r requirements.txt
 COPY server/ ./
 COPY --from=frontend-build /build/frontend/dist ./frontend/dist
-RUN python manage.py collectstatic --noinput \
+RUN DJANGO_SECRET_KEY=build-only-not-a-runtime-secret python manage.py collectstatic --noinput \
     && useradd --create-home --shell /usr/sbin/nologin app \
     && mkdir -p /data \
     && chown app:app /data

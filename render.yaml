@@ -3,6 +3,7 @@ services:
     name: fullstack-developer-capstone
     runtime: docker
     plan: free
+    autoDeployTrigger: off
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /djangoapp/health
