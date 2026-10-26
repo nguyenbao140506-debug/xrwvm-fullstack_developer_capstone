@@ -3,6 +3,9 @@ import os
 import re
 import subprocess
 import time
+
+import mss
+import mss.tools
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -90,6 +93,17 @@ def capture_api_outputs():
     ])
 
 
+def capture_browser_window(path):
+    time.sleep(1)
+    with mss.mss() as screenshot:
+        monitor = screenshot.monitors[1]
+        mss.tools.to_png(
+            screenshot.grab(monitor).rgb,
+            (monitor["width"], monitor["height"]),
+            output=str(path),
+        )
+
+
 def wait_for_ready(base):
     import urllib.request
 
@@ -105,13 +119,17 @@ def wait_for_ready(base):
 
 def take_screenshots():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch()
-        context = browser.new_context(viewport={"width": 1440, "height": 1150}, device_scale_factor=1)
+        browser = playwright.chromium.launch(
+            headless=False,
+            args=["--no-sandbox", "--disable-dev-shm-usage", "--window-size=1440,1200", "--window-position=0,0"],
+        )
+        context = browser.new_context(viewport=None, device_scale_factor=1)
         page = context.new_page()
 
         page.goto(BASE_URL + "/", wait_until="networkidle")
         page.locator(".dealer-card").first.wait_for()
-        page.screenshot(path=str(EVIDENCE / "get_dealers.png"), full_page=True)
+        page.locator(".dealer-card").first.scroll_into_view_if_needed()
+        capture_browser_window(EVIDENCE / "get_dealers.png")
 
         page.goto(BASE_URL + "/login", wait_until="networkidle")
         page.get_by_label("Username").fill(DEMO_USER)
@@ -119,15 +137,18 @@ def take_screenshots():
         page.get_by_role("button", name="Log in").click()
         page.wait_for_url(BASE_URL + "/")
         page.locator(".dealer-card").first.wait_for()
-        page.screenshot(path=str(EVIDENCE / "get_dealers_loggedin.png"), full_page=True)
+        page.locator(".dealer-card").first.scroll_into_view_if_needed()
+        capture_browser_window(EVIDENCE / "get_dealers_loggedin.png")
 
         page.goto(BASE_URL + "/dealers/state/Kansas", wait_until="networkidle")
         page.locator(".dealer-card").first.wait_for()
-        page.screenshot(path=str(EVIDENCE / "dealersbystate.png"), full_page=True)
+        page.locator(".dealer-card").first.scroll_into_view_if_needed()
+        capture_browser_window(EVIDENCE / "dealersbystate.png")
 
         page.goto(BASE_URL + "/dealers/15", wait_until="networkidle")
         page.get_by_role("heading", name="Reviews").wait_for()
-        page.screenshot(path=str(EVIDENCE / "dealer_id_reviews.png"), full_page=True)
+        page.locator(".detail-card").scroll_into_view_if_needed()
+        capture_browser_window(EVIDENCE / "dealer_id_reviews.png")
 
         page.goto(BASE_URL + "/dealers/15/review", wait_until="networkidle")
         page.get_by_role("heading", name="Review Dealer").wait_for()
@@ -154,14 +175,14 @@ def take_screenshots():
             admin.get_by_label("Password").fill(ROOT_PASSWORD)
             admin.get_by_role("button", name="Log in").click()
         admin.get_by_text("Welcome,", exact=False).wait_for()
-        admin.screenshot(path=str(EVIDENCE / "admin_login.png"), full_page=True)
+        capture_browser_window(EVIDENCE / "admin_login.png")
         logout_button = admin.locator("#user-tools form button")
         if logout_button.count():
             logout_button.click()
         else:
             admin.locator("#user-tools a[href*='logout']").click()
         admin.wait_for_url("**/admin/login/**")
-        admin.screenshot(path=str(EVIDENCE / "admin_logout.png"), full_page=True)
+        capture_browser_window(EVIDENCE / "admin_logout.png")
         browser.close()
 
 
