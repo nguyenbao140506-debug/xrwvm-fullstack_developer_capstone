@@ -48,23 +48,23 @@ export default function Register({ onRegistered, submitRegistration = (values) =
         <div className="form-grid">
           <div>
             <label htmlFor="register-username">Username</label>
-            <input id="register-username" autoComplete="username" name="username" value={form.username} onChange={updateField} required minLength={3} />
+            <input id="register-username" autoComplete="username" name="username" placeholder="Username" value={form.username} onChange={updateField} required minLength={3} />
           </div>
           <div>
             <label htmlFor="register-first-name">First Name</label>
-            <input id="register-first-name" autoComplete="given-name" name="first_name" value={form.first_name} onChange={updateField} required />
+            <input id="register-first-name" autoComplete="given-name" name="first_name" placeholder="First Name" value={form.first_name} onChange={updateField} required />
           </div>
           <div>
             <label htmlFor="register-last-name">Last Name</label>
-            <input id="register-last-name" autoComplete="family-name" name="last_name" value={form.last_name} onChange={updateField} required />
+            <input id="register-last-name" autoComplete="family-name" name="last_name" placeholder="Last Name" value={form.last_name} onChange={updateField} required />
           </div>
           <div>
             <label htmlFor="register-email">Email</label>
-            <input id="register-email" autoComplete="email" type="email" name="email" value={form.email} onChange={updateField} required />
+            <input id="register-email" autoComplete="email" type="email" name="email" placeholder="email" value={form.email} onChange={updateField} required />
           </div>
           <div className="full-width">
             <label htmlFor="register-password">Password</label>
-            <input id="register-password" aria-describedby="register-password-hint" autoComplete="new-password" type="password" name="password" value={form.password} onChange={updateField} required minLength={8} />
+            <input id="register-password" aria-describedby="register-password-hint" autoComplete="new-password" type="password" name="password" placeholder="Password" value={form.password} onChange={updateField} required minLength={8} />
             <span id="register-password-hint" className="field-hint">Use a strong password of at least 8 characters.</span>
           </div>
         </div>
