@@ -32,10 +32,10 @@ def save_curl_file(name, sections):
             stream.write("Command:\n")
             stream.write(command + "\n\nOutput:\n")
             code, output = curl(args)
-            output = re.sub(r"(?im)^(Set-Cookie:\\s*(?:sessionid|csrftoken)=)[^;\\r\\n]+", r"\\1[redacted]", output)
-            output = re.sub(r'("csrfToken"\\s*:\\s*")[^"]+(")', r"\\1[redacted]\\2", output)
+            output = re.sub(r"(?im)^(Set-Cookie:\s*(?:sessionid|csrftoken)=)[^;\r\n]+", r"\1[redacted]", output)
+            output = re.sub(r'("csrfToken"\s*:\s*")[^"]+(")', r"\1[redacted]\2", output)
             stream.write(output)
-            if not output.endswith("\\n"):
+            if not output.endswith("\n"):
                 stream.write("\n")
             stream.write(f"[curl exit code: {code}]\n\n")
             if code:
