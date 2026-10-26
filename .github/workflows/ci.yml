@@ -45,7 +45,7 @@ jobs:
         run: |
           python manage.py migrate --noinput
           python manage.py seed_course_data
-          python3 manage.py runserver 127.0.0.1:8000 --noreload > "$RUNNER_TEMP/django_server.log" 2>&1 &
+          python -u manage.py runserver 127.0.0.1:8000 --noreload > "$RUNNER_TEMP/django_server.log" 2>&1 &
           server_pid=$!
           sleep 3
           cat "$RUNNER_TEMP/django_server.log"
@@ -83,4 +83,3 @@ jobs:
           jshint --config .jshintrc src/api.js vite.config.js
           npm test
           npm run build
-
