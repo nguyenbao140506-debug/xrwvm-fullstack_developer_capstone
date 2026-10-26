@@ -122,10 +122,15 @@ jobs:
       - name: Generate ephemeral test account passwords
         shell: bash
         run: |
-          python - <<'PY' >> "$GITHUB_ENV"
+          python - <<'PY'
+          import os
           import secrets
-          print(f"CI_DEMO_PASSWORD={secrets.token_urlsafe(18)}")
-          print(f"CI_ROOT_PASSWORD={secrets.token_urlsafe(18)}")
+
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              for key in ("CI_DEMO_PASSWORD", "CI_ROOT_PASSWORD"):
+                  value = secrets.token_urlsafe(18)
+                  print(f"::add-mask::{value}")
+                  env_file.write(f"{key}={value}\n")
           PY
       - name: Migrate, load course records, and create temporary accounts
         working-directory: server
