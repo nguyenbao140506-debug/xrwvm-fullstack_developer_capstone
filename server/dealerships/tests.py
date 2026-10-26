@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import Client, TestCase
-from rest_framework.test import APIClient
 
 from .models import Dealer, Review
 
@@ -197,3 +196,4 @@ class AuthenticationAndReviewTests(TestCase):
             HTTP_X_CSRFTOKEN=token,
         )
         self.assertEqual(response.status_code, 404)
+
