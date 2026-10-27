@@ -1,0 +1,35 @@
+name: Deployment Evidence
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    name: Capture deployed application
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DEPLOYMENT_BASE_URL: https://fullstack-developer-capstone-36w2.onrender.com
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install Chromium and screen capture tools
+        run: |
+          python -m pip install playwright mss
+          python -m playwright install --with-deps chromium
+      - name: Capture public deployment and cURL outputs
+        run: xvfb-run -a --server-args="-screen 0 1600x1400x24" python .github/scripts/capture_deployment.py
+      - name: Upload corrected submission bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: corrected-capstone-submissions
+          path: resubmission/
+          retention-days: 90
