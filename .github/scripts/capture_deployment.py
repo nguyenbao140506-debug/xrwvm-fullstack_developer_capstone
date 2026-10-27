@@ -30,7 +30,7 @@ REVIEW = (
 def run_curl(method, path, payload=None, authenticated=False, csrf=None):
     args = ["curl", "-sS", "--connect-timeout", "20", "--max-time", "150", "-X", method, "-b", str(COOKIE_JAR), "-c", str(COOKIE_JAR)]
     if payload is not None:
-        args += ["-H", "Content-Type: application/json", "--data", json.dumps(payload, separators=(",", ":"))]
+        args += ["-H", "Content-Type: application/json", "-H", "Origin: " + BASE_URL, "-H", "Referer: " + BASE_URL + "/", "--data", json.dumps(payload, separators=(",", ":"))]
     if csrf:
         args += ["-H", "X-CSRFToken: " + csrf]
     args += ["-w", "\nHTTP_STATUS=%{http_code}\n", BASE_URL + path]
@@ -75,6 +75,8 @@ def capture_curl_evidence():
         'curl -sS -X POST "$BASE_URL/djangoapp/login" \\\n'
         '  -b "$COOKIE_JAR" -c "$COOKIE_JAR" \\\n'
         '  -H "Content-Type: application/json" \\\n'
+        '  -H "Origin: ' + BASE_URL + '" \\\n'
+        '  -H "Referer: ' + BASE_URL + '/" \\\n'
         '  -H "X-CSRFToken: $CSRF_TOKEN" \\\n'
         "  --data " + shlex.quote(json.dumps(payload, separators=(",", ":"))) + " \\\n"
         "  -w '\\nHTTP_STATUS=%{http_code}\\n'"
