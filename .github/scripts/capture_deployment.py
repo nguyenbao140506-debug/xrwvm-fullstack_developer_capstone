@@ -191,6 +191,13 @@ def capture_pages():
             card.scroll_into_view_if_needed()
             capture_window("deployed_add_review.png")
             shutil.copyfile(IMAGES / "deployed_add_review.png", IMAGES / "added_review.png")
+            page.get_by_role("button", name="Log out", exact=True).click()
+            page.get_by_role("link", name="Log in", exact=True).wait_for()
+            goto(page, "/")
+            page.locator(".dealer-card").first.wait_for()
+            page.bring_to_front()
+            page.screenshot()
+            capture_window("deployed_landingpage.png")
         except Exception:
             capture_window("capture_failure.png")
             raise
