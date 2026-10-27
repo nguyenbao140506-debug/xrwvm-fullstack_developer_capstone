@@ -124,11 +124,12 @@ def capture_pages():
             headless=False,
             args=["--no-sandbox", "--disable-dev-shm-usage", "--window-size=1600,1400", "--window-position=0,0"],
         )
-        context = browser.new_context(viewport=None, device_scale_factor=1)
+        context = browser.new_context(no_viewport=True, device_scale_factor=1)
         page = context.new_page()
         page.set_default_timeout(30000)
         try:
             goto(page, "/")
+            page.wait_for_function("window.innerWidth >= 1500 && window.innerHeight >= 1200")
             page.locator(".dealer-card").first.wait_for()
             capture_window("deployed_landingpage.png")
             page.locator("#dealer-list").scroll_into_view_if_needed()
@@ -173,6 +174,10 @@ def capture_pages():
             page.locator("#review-car-make").select_option("Toyota")
             page.locator("#review-car-model").select_option("Camry")
             page.locator("#review-car-year").fill("2023")
+            page.get_by_role("button", name="Post Review", exact=True).scroll_into_view_if_needed()
+            page.wait_for_function(
+                "['review-text', 'review-purchase-date', 'review-car-make', 'review-car-model', 'review-car-year'].every(id => { const box = document.getElementById(id).getBoundingClientRect(); return box.top >= 0 && box.bottom <= window.innerHeight; })"
+            )
             capture_window("dealership_review_submission.png")
             page.get_by_role("button", name="Post Review", exact=True).click()
             page.get_by_role("heading", name="Reviews", exact=True).wait_for()
@@ -183,6 +188,7 @@ def capture_pages():
             page.wait_for_function(
                 "Array.from(document.querySelectorAll('.sentiment-image')).every(image => image.complete && image.naturalWidth > 0)"
             )
+            card.scroll_into_view_if_needed()
             capture_window("deployed_add_review.png")
             shutil.copyfile(IMAGES / "deployed_add_review.png", IMAGES / "added_review.png")
         except Exception:
