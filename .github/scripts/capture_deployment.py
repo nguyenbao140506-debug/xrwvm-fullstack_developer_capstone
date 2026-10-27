@@ -182,7 +182,7 @@ def capture_pages():
             page.get_by_role("button", name="Post Review", exact=True).click()
             page.get_by_role("heading", name="Reviews", exact=True).wait_for()
             page.reload(wait_until="networkidle")
-            card = page.locator(".review-card").filter(has_text=REVIEW)
+            card = page.locator(".review-card").filter(has_text=REVIEW).filter(has_text=USERNAME)
             card.wait_for()
             card.locator('img[alt="positive sentiment"]').wait_for()
             page.wait_for_function(
