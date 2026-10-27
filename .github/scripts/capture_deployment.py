@@ -124,7 +124,7 @@ def capture_pages():
             headless=False,
             args=["--no-sandbox", "--disable-dev-shm-usage", "--window-size=1600,1400", "--window-position=0,0"],
         )
-        context = browser.new_context(no_viewport=True, device_scale_factor=1)
+        context = browser.new_context(no_viewport=True)
         page = context.new_page()
         page.set_default_timeout(30000)
         try:
