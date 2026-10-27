@@ -3,6 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
 from .models import Dealer, Review
+from .sentiment import review_sentiment
 
 User = get_user_model()
 
@@ -43,6 +44,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    sentiment = serializers.SerializerMethodField()
     author = serializers.SerializerMethodField()
     dealer_name = serializers.CharField(source="dealer.name", read_only=True)
     dealership = serializers.IntegerField(source="dealer_id", read_only=True)
@@ -54,9 +56,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = (
             "id", "dealer", "dealer_name", "author", "text", "created_at",
             "name", "dealership", "review", "purchase", "purchase_date",
-            "car_make", "car_model", "car_year",
+            "car_make", "car_model", "car_year", "sentiment",
         )
         read_only_fields = ("id", "dealer_name", "author", "created_at")
+
+    def get_sentiment(self, obj):
+        return review_sentiment(obj.text)
 
     def get_author(self, obj):
         if obj.author_id:

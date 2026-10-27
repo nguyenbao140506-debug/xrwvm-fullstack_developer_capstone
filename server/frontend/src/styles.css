@@ -148,3 +148,13 @@ input, textarea { width:100%; border:1px solid #cbd8de; border-radius:9px; backg
 }
 
 .form-card select{display:block;width:100%;margin-top:8px;border:1px solid #cbd8de;border-radius:9px;background:white;padding:12px 13px;color:#142b3b}.form-card .checkbox-label{display:flex;align-items:center;gap:10px;margin:20px 0}.form-card .checkbox-label input{width:18px;height:18px;margin:0}.endpoint-link{color:#176e69;font-weight:650}
+.dealer-facts{display:grid;gap:6px;margin:8px 0 20px;font-size:.9rem}
+.dealer-facts div{display:grid;grid-template-columns:78px 1fr;gap:8px}
+.dealer-facts dt{font-weight:750;color:#536b77}.dealer-facts dd{margin:0;color:var(--ink)}
+.dealer-facts-detail{max-width:620px;font-size:1rem}
+.review-header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px}
+.sentiment-badge{display:flex;align-items:center;gap:10px;font-size:.9rem;font-weight:750}
+.sentiment-image{display:block;flex:none;width:56px;height:56px}
+.review-vehicle{font-size:.85rem;color:#526c78;margin-bottom:0}
+.signed-in{max-width:none;overflow:visible;text-overflow:clip}
+@media(max-width:600px){.review-header{align-items:flex-start;flex-direction:column;gap:8px}.account-links{flex-wrap:wrap}}

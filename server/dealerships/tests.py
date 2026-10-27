@@ -61,6 +61,21 @@ class PublicDealerAPITests(TestCase):
         self.assertEqual(response.json()["sentiment"], "positive")
         self.assertIn("compound", response.json()["scores"])
 
+    def test_review_responses_include_positive_negative_and_neutral_sentiment(self):
+        samples = {
+            "Fantastic services, wonderful staff, I loved it!": "positive",
+            "Terrible service. I hate this awful experience.": "negative",
+            "The car is blue.": "neutral",
+        }
+        for text in samples:
+            Review.objects.create(dealer=self.kansas, text=text)
+        response = self.client.get("/djangoapp/get_reviews", {"dealerId": self.kansas.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            {review["text"]: review["sentiment"] for review in response.json()},
+            samples,
+        )
+
     def test_car_catalog_returns_course_make_model_pairs(self):
         response = self.client.get("/djangoapp/get_cars")
         self.assertEqual(response.status_code, 200)

@@ -48,7 +48,13 @@ function DealerCard({ dealer, user }) {
         <span className="source-tag">Capstone record</span>
       </div>
       <h2><Link to={"/dealers/" + dealer.id}>{dealer.name}</Link></h2>
-      <p className="muted">{[dealer.address, dealer.city, dealer.state].filter(Boolean).join(", ")}</p>
+      <dl className="dealer-facts">
+        <div><dt>ID</dt><dd>{dealer.id}</dd></div>
+        <div><dt>City</dt><dd>{dealer.city || "Not listed"}</dd></div>
+        <div><dt>State</dt><dd>{dealer.state || "Not listed"}</dd></div>
+        <div><dt>Address</dt><dd>{dealer.address || "Not listed"}</dd></div>
+        <div><dt>ZIP code</dt><dd>{dealer.zip || "Not listed"}</dd></div>
+      </dl>
       {dealer.phone && <p><a href={"tel:" + dealer.phone}>{dealer.phone}</a></p>}
       <div className="card-actions">
         <Link className="text-link" to={"/dealers/" + dealer.id}>Details and reviews <span aria-hidden="true">→</span></Link>
@@ -206,7 +212,13 @@ function DealerPage({ user }) {
       <section className="detail-card">
         <p className="eyebrow">{dealer.city ? dealer.city + ", " + dealer.state : dealer.state}</p>
         <h1>{dealer.name}</h1>
-        {dealer.address && <p>{dealer.address}{dealer.city ? ", " + dealer.city : ""}, {dealer.state}</p>}
+        <dl className="dealer-facts dealer-facts-detail">
+          <div><dt>ID</dt><dd>{dealer.id}</dd></div>
+          <div><dt>City</dt><dd>{dealer.city}</dd></div>
+          <div><dt>State</dt><dd>{dealer.state}</dd></div>
+          <div><dt>Address</dt><dd>{dealer.address}</dd></div>
+          <div><dt>ZIP code</dt><dd>{dealer.zip}</dd></div>
+        </dl>
         {dealer.phone && <p>Phone: <a href={"tel:" + dealer.phone}>{dealer.phone}</a></p>}
         {dealer.website && <p>Website: <a href={dealer.website} target="_blank" rel="noreferrer">{dealer.website}</a></p>}
         <p className="source-note">Dealership record from the Full Stack Developer Capstone dataset.</p>
@@ -226,8 +238,15 @@ function DealerPage({ user }) {
           <div className="review-list">
             {reviews.map((review) => (
               <article className="review-card" key={review.id}>
+                <div className="review-header">
+                  <div className={"sentiment-badge sentiment-" + (review.sentiment || "neutral")}>
+                    <img className="sentiment-image" src={"/static/sentiment-" + (review.sentiment || "neutral") + ".svg"} alt={(review.sentiment || "neutral") + " sentiment"} width="56" height="56" />
+                    <span>{(review.sentiment || "neutral").replace(/^./, (letter) => letter.toUpperCase())}</span>
+                  </div>
+                  <p className="review-byline">{review.author} · {new Date(review.created_at).toLocaleDateString()}</p>
+                </div>
                 <p className="review-quote">“{review.text}”</p>
-                <p className="review-byline">{review.author} · {new Date(review.created_at).toLocaleDateString()}</p>
+                {(review.purchase_date || review.car_make) && <p className="review-vehicle">{[review.car_make, review.car_model, review.car_year].filter(Boolean).join(" ")}{review.purchase_date ? " · Purchase date: " + review.purchase_date : ""}</p>}
               </article>
             ))}
           </div>
@@ -288,7 +307,7 @@ function ReviewPage({ user }) {
   return (
     <section className="form-card review-form-card">
       <p className="eyebrow">Share your experience</p>
-      <h1>Review Dealer</h1>
+      <h1>Post Review</h1>
       <p className="muted">{dealer ? "Your review for " + dealer.name + " will be public." : "Loading dealership…"}</p>
       <p className="endpoint-link">POST /djangoapp/add_review</p>
       <form onSubmit={submit}>
@@ -303,7 +322,7 @@ function ReviewPage({ user }) {
           <label className="full-width" htmlFor="review-car-year">Car year<input id="review-car-year" type="number" min="1900" max="2035" value={form.car_year} onChange={(event) => setForm({ ...form, car_year: event.target.value })} /></label>
         </div>
         {error && <p className="form-message error" role="alert">{error}</p>}
-        <button className="button button-primary" type="submit" disabled={saving || !dealer}>{saving ? "Submitting…" : "Submit review"}</button>
+        <button className="button button-primary" type="submit" disabled={saving || !dealer}>{saving ? "Submitting…" : "Post Review"}</button>
       </form>
     </section>
   );

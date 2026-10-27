@@ -150,7 +150,7 @@ def take_screenshots():
         capture_browser_window(EVIDENCE / "dealer_id_reviews.png")
 
         page.goto(BASE_URL + "/dealers/15/review", wait_until="networkidle")
-        page.get_by_role("heading", name="Review Dealer").wait_for()
+        page.get_by_role("heading", name="Post Review").wait_for()
         review_text = "Excellent service, clear communication, and a smooth purchase."
         page.locator("#review-text").fill(review_text)
         page.locator("#review-purchase-date").fill("2024-04-12")
@@ -162,10 +162,10 @@ def take_screenshots():
         page.wait_for_function("document.querySelector('#review-car-model').options.length > 1")
         model_select.select_option(model_select.locator("option").nth(1).get_attribute("value"))
         page.locator("#review-car-year").fill("2022")
-        page.screenshot(path=str(EVIDENCE / "dealership_review_submission.png"), full_page=True)
-        page.get_by_role("button", name="Submit review").click()
+        capture_browser_window(EVIDENCE / "dealership_review_submission.png")
+        page.get_by_role("button", name="Post Review").click()
         page.locator(".review-quote").filter(has_text=review_text).wait_for()
-        page.screenshot(path=str(EVIDENCE / "added_review.png"), full_page=True)
+        capture_browser_window(EVIDENCE / "added_review.png")
 
         admin = context.new_page()
         admin.goto(BASE_URL + "/admin/", wait_until="networkidle")
